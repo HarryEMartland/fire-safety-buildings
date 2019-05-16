@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fire Safety Buildings</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous">
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <div class="col mt-3">
+            <div id="map" style="height: 100%"></div>
+        </div>
+        <div class="col text-center">
+            <div class="row">
+                <div class="col mt-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Number of Buildings</h5>
+                            <h2 class="card-text" id="total-buildings"></h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col mt-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Expected Cost</h5>
+                            <h2 class="card-text" id="total-expected-cost"></h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col mt-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Cost to Leasholders</h5>
+                            <h2 class="card-text" id="total-leasholder-cost"></h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="row mt-3">
+        <table id="building-table" class="table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Cladding Type</th>
+                <th>Expected Cost</th>
+                <th>Leaseholders Paying</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+        crossorigin="anonymous"></script>
+<script>
+    var map;
+    var buildings = [
+        {
+            name: "NV Buildings",
+            expectedCots: 2300000,
+            latitude: 53.473123,
+            longitude: -2.293310,
+            leaseHolderPaying: true,
+            claddingType: "EPS"
+        }, {
+            name: "Vallea Court",
+            expectedCots: 1500000,
+            latitude: 53.489832,
+            longitude: -2.239516,
+            leaseHolderPaying: false
+        }, {
+            name: "Cypress Place",
+            expectedCots: 1500000,
+            latitude: 53.489850,
+            longitude: -2.240224,
+            leaseHolderPaying: false
+        }, {
+            name: "Citiscape",
+            expectedCots: 2500000,
+            latitude: 51.375027,
+            longitude: -0.102941,
+            leaseHolderPaying: false
+        }
+    ];
+
+    var buildingTable = $('#building-table');
+    $('#total-buildings').text(buildings.length);
+    $('#total-expected-cost').text('£ ' + buildings.reduce((sum, building) => sum + building.expectedCots, 0) / 1000000 + 'M');
+    $('#total-leasholder-cost').text('£ ' + buildings.filter(b => b.leaseHolderPaying).reduce((sum, building) => sum + building.expectedCots, 0) / 1000000 + 'M');
+
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: {lat: -34.397, lng: 150.644},
+            zoom: 8,
+            mapTypeControl: false,
+            fullscreenControl: false,
+            streetViewControl: false
+        });
+
+        var bounds = new google.maps.LatLngBounds();
+        buildings
+            .sort((a, b) => a.name < b.name ? -1 : 0)
+            .forEach(building => {
+                var color = building.leaseHolderPaying ? "red" : "green";
+                var position = {lat: building.latitude, lng: building.longitude};
+                new google.maps.Marker({
+                    position: position,
+                    map: map,
+                    icon: {url: "http://maps.google.com/mapfiles/ms/icons/" + color + "-dot.png"}
+                });
+                bounds.extend(position);
+                buildingTable.append(`<tr>
+                    <td>${building.name}</td>
+                    <td>${building.claddingType || '?'}</td>
+                    <td>£${building.expectedCots || '?'}</td>
+                    <td>${building.leaseHolderPaying}</td>
+                </tr>`)
+            });
+        map.fitBounds(bounds);
+
+    }
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA0mgRRCYE44e3t7RGLoanVOqSd28HWt-k&callback=initMap"
+        async defer></script>
+</body>
+</html>
