@@ -40,7 +40,7 @@
                 <div class="col mt-3">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">Total Expected Cost</h5>
+                            <h5 class="card-title">Total Estimated Cost</h5>
                             <h2 class="card-text" id="total-expected-cost"></h2>
                         </div>
                     </div>
@@ -50,7 +50,7 @@
                 <div class="col mt-3">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">Total Cost to Leaseholders</h5>
+                            <h5 class="card-title">Estimated Cost to Leaseholders</h5>
                             <h2 class="card-text" id="total-leasholder-cost"></h2>
                         </div>
                     </div>
@@ -65,15 +65,12 @@
             <tr>
                 <th>Building</th>
                 <th>Cladding Type</th>
-                <th>Expected Cost</th>
+                <th>Estimated Cost</th>
                 <th>Leaseholders Liable</th>
             </tr>
             </thead>
         </table>
     </div>
-    <footer>
-        Add your building here
-    </footer>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"
         integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
@@ -83,26 +80,26 @@
     var buildings = [
         {
             name: "NV Buildings",
-            expectedCosts: 2300000,
+            estimatedCosts: 2300000,
             latitude: 53.473123,
             longitude: -2.293310,
             leaseHolderPaying: true,
             claddingType: "EPS"
         }, {
             name: "Vallea Court",
-            expectedCosts: 1500000,
+            estimatedCosts: 1500000,
             latitude: 53.489832,
             longitude: -2.239516,
             leaseHolderPaying: false
         }, {
             name: "Cypress Place",
-            expectedCosts: 1500000,
+            estimatedCosts: 1500000,
             latitude: 53.489850,
             longitude: -2.240224,
             leaseHolderPaying: false
         }, {
             name: "Citiscape",
-            expectedCosts: 2500000,
+            estimatedCosts: 2500000,
             latitude: 51.375027,
             longitude: -0.102941,
             leaseHolderPaying: false
@@ -111,8 +108,8 @@
 
     var buildingTable = $('#building-table');
     $('#total-buildings').text(buildings.length);
-    $('#total-expected-cost').text('£ ' + buildings.reduce((sum, building) => sum + building.expectedCosts, 0) / 1000000 + 'M');
-    $('#total-leasholder-cost').text('£ ' + buildings.filter(b => b.leaseHolderPaying).reduce((sum, building) => sum + building.expectedCosts, 0) / 1000000 + 'M');
+    $('#total-expected-cost').text('£ ' + buildings.reduce((sum, building) => sum + building.estimatedCosts, 0) / 1000000 + 'M');
+    $('#total-leasholder-cost').text('£ ' + buildings.filter(b => b.leaseHolderPaying).reduce((sum, building) => sum + building.estimatedCosts, 0) / 1000000 + 'M');
 
     function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
@@ -136,15 +133,15 @@
                 });
                 bounds.extend(position);
 
-                let expectedCosts = '?';
-                if(building.expectedCosts){
-                    expectedCosts = building.expectedCosts / 1000000;
+                let estimatedCosts = '?';
+                if(building.estimatedCosts){
+                    estimatedCosts = building.estimatedCosts / 1000000;
                 }
 
                 buildingTable.append(`<tr>
                     <td>${building.name}</td>
                     <td>${building.claddingType || '?'}</td>
-                    <td>£${expectedCosts}M</td>
+                    <td>£${estimatedCosts}M</td>
                     <td>${building.leaseHolderPaying}</td>
                 </tr>`)
             });
